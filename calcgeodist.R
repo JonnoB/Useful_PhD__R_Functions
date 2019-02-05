@@ -1,4 +1,4 @@
-calcgeodist <- function(points, trans2){
+calcgeodist <- function(points, Cabledist){
   #calculates the distance between all nodes in the network. produces distance for both the cable length from the data and the geodistance using the coordinates. After using this function the error can be found.
   #This is used for correcting errors in the coordinates of the nodes
   
@@ -8,9 +8,7 @@ calcgeodist <- function(points, trans2){
     select(name, Lat, Lon) 
   
   #Add on cable length
-  CableTest <- trans2 %>%
-    mutate( Length = OHL.Length + Cable.Length ) %>%
-    select(Bus.1, Bus.2, Length) %>%
+  CableTest <- Cabledist %>%
     left_join(., TempPoints, by = c("Bus.1"= "name")) %>%
     left_join(., TempPoints, by = c("Bus.2"= "name")) 
   

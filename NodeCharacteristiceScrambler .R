@@ -21,3 +21,4 @@ NodeCharacteristiceScrambler <- function(g, Sims, seed = 1983){
     bind_cols(NodeNames, .)
   
 }
+

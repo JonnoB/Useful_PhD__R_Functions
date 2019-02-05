@@ -1,4 +1,6 @@
 ReOrderGraph <- function(g, Sim_Order){
+  #This function simply re orders the load and demand of a netowork accross nodes.
+  #An upgrade to this function would allow for choice over Nodetype to be selected
   
   g2 <-g
   
