@@ -5,11 +5,11 @@ CleanNames <- function(df, TargetColumn, AlphaOrder){
     mutate(temp2 = temp1,
            temp2 = temp1 %>%
              str_replace_all(., "_", " ") %>%
-             str_extract_all(., "([0-9])+")%>% as.numeric(.)/100,
+             str_extract_all(., "([0-9])+")%>% as.numeric(.)/100, #extract all alpha values and divide by 100
            temp3 = temp1 %>%
              str_replace_all(., "_", " ") %>%
              str_extract_all(., "([aA-zZ\\s])+", T) %>%
-             paste0(., ifelse(is.na(temp2), "", temp2)),
+             paste0(., ifelse(is.na(temp2), "", temp2)), #If there is an alpha value use that otherwise use the model name
            temp3 = temp3 %>% as.factor() %>%
              fct_relevel(., AlphaOrder)
     ) %>%

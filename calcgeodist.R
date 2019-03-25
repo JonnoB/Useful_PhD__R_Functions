@@ -23,5 +23,5 @@ calcgeodist <- function(points, Cabledist){
     mutate(geodist = round(geodist, 2),
            diff = Length - geodist,
            absdiff = abs(diff),
-           ratio = absdiff/Length)
+           ratio = absdiff/Length) 
 }
