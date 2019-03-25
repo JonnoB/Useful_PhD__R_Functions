@@ -22,7 +22,7 @@ Create_Tension_matrix <- function(EdgeNode, zvect, kvect, dvect){
   Adj
   
   Zmat <- Adj*zvect #The adjacency matrix weight by node height
-  dZmat <- Zmat- t(Zmat) #The differenec in height between adjacent nodes
+  dZmat <- t(Zmat)- Zmat #The differenec in height between adjacent nodes
   #Create the absolute K (spring stiffness) a and distance matrices
   kmat <- t(EdgeNode) %*% diag(kvect, nrow = length(kvect)) %*% EdgeNode %>% abs 
   Dmat <- t(EdgeNode) %*% diag(dvect, nrow = length(kvect)) %*% EdgeNode %>% abs
