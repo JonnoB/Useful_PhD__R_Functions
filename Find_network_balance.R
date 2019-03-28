@@ -1,4 +1,4 @@
-Find_network_balance <- function(g, tstep = 0.5, mass = 2000, maxIter =2000, k = 1000, frctmultiplier = 1){
+Find_network_balance <- function(g, tstep = 0.5, mass = 2000, maxIter =2000, k = 1000, frctmultiplier = 1, tol = 1e-10, verbose = TRUE){
   
   A <- as_data_frame(g) %>% 
     select(Link, from, to) %>% 
@@ -29,14 +29,14 @@ Find_network_balance <- function(g, tstep = 0.5, mass = 2000, maxIter =2000, k =
       friction = 0,
       NetForce = force + NetTension - friction,
       acceleration = NetForce/mass,
-      t = 0) %>%
-    filter(!(node %in% deletenames))
+      t = 0) #%>%
+    #filter(!(node %in% deletenames)) #what is this ish?
   
   Link <- as_data_frame(g)  %>%
     mutate(EdgeName = Link, distance = 1/Y, alpha = Link.Limit/abs(PowerFlow),  k= k*(1-1/alpha)) %>% #arbitary k!
     select(EdgeName, distance, k) 
   
-  test <-FindStabilSystem2(NodeStatus, A, Link$k, Link$distance, tstep, maxIter, frctmultiplier) 
+  test <-FindStabilSystem2(NodeStatus, A, Link$k, Link$distance, tstep, maxIter, frctmultiplier, tol, verbose = verbose) 
   
   return(test)
   

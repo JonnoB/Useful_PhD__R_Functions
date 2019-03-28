@@ -10,7 +10,7 @@ Create_balanced_blocks <- function(g){
   
   List_of_BiConComps <-1:length(bigraph$components) %>%
     map(~{
-      Comp_num<- .x
+      Comp_num <- .x
       
       Nodes_in_j <- get.vertex.attribute(g, "name", bigraph$components[[Comp_num]]) 
       
