@@ -1,4 +1,4 @@
-Find_network_balance <- function(g, tstep = 0.5, mass = 2000, maxIter =2000, k = 1000, frctmultiplier = 1, tol = 1e-10, verbose = TRUE){
+Find_network_balance <- function(g, tstep = 0.5, mass = 2000, maxIter =2000, kbase = 1000, kdiff =1000, frctmultiplier = 1, tol = 1e-10, verbose = TRUE){
   
   A <- as_data_frame(g) %>% 
     select(Link, from, to) %>% 
@@ -33,7 +33,10 @@ Find_network_balance <- function(g, tstep = 0.5, mass = 2000, maxIter =2000, k =
     #filter(!(node %in% deletenames)) #what is this ish?
   
   Link <- as_data_frame(g)  %>%
-    mutate(EdgeName = Link, distance = 1/Y, alpha = Link.Limit/abs(PowerFlow),  k= k*(1-1/alpha)) %>% #arbitary k!
+    mutate(EdgeName = Link, distance = 1/Y, LL = abs(PowerFlow)/Link.Limit, k = kbase + kdiff*(1-LL)) %>% #This sets a floor and ceiling 
+    #to the k values. the more highly loaded a line is the more it should stretch. as LL varies between 0, no loading (stiffest)
+    #to 1, overload point, (most elastic). The larger kdiff is the larger the difference in elasticity for highly and lightly loaded lines.
+    #Very large kdiff means very little elasticty on lightly loaded lines
     select(EdgeName, distance, k) 
   
   test <-FindStabilSystem2(NodeStatus, A, Link$k, Link$distance, tstep, maxIter, frctmultiplier, tol, verbose = verbose) 
