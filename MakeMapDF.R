@@ -65,8 +65,8 @@ MakeMapDF <- function(g, points, seed = 4747){
   Positioning <- matrix(c(get.vertex.attribute(g3, "Lon"),
                           get.vertex.attribute(g3, "Lat")),
                         ncol = 2) %>% as_tibble()  %>%
-    rename(Latitude = V1,
-           Longitude = V2)
+    rename(Latitude = V2,
+           Longitude = V1)
   
   GGmapData <- Positioning  %>%
     mutate(Node = get.vertex.attribute(g3, "name")) %>%
