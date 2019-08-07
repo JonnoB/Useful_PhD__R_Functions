@@ -4,6 +4,11 @@ This repo stores a collection of useful functions that are not part of the Power
 
 At some point these functions may be turned into a package for ease of use.
 
+these functions are used in the following repos
+
+* [Proportional Loading](https://github.com/JonnoB/ProportionalLoading)
+* [Flow Spring Syste,](https://github.com/JonnoB/Flow_Spring_System)
+
 # Instructions
 
 1. download or clone
