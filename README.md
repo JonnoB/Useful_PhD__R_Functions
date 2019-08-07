@@ -7,7 +7,7 @@ At some point these functions may be turned into a package for ease of use.
 these functions are used in the following repos
 
 * [Proportional Loading](https://github.com/JonnoB/ProportionalLoading)
-* [Flow Spring Syste,](https://github.com/JonnoB/Flow_Spring_System)
+* [Flow Spring System](https://github.com/JonnoB/Flow_Spring_System)
 
 # Instructions
 
