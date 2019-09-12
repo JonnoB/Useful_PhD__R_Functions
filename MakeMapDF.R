@@ -1,6 +1,6 @@
 MakeMapDF <- function(g, points, seed = 4747){
   
-  #This function can be improved by taking the already aggreggated points file. THis will make it more flexible
+  #This function can be improved by taking the already aggreggated points file. This will make it more flexible
   
   
   #This function takes 2 (+1) inputs and outputs a dataframe of the graph ready for plotting

@@ -1,6 +1,6 @@
 DamageComparison <- function(df, Target = "Blackout", AlphaOrder){
   #compares the damge of each line limit to the real damage using several metrics
-  df <- df %>% rename_(Target = Target)
+  df <- df %>% rename(Target = Target)
   
   1:max(df$simulationID) %>% map_df(~{
     
