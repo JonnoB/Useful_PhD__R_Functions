@@ -9,10 +9,7 @@ Scrambled_Edge_SaveMultiAttacks_parallel_future <- function(g, target_orders, De
   #DeleteOrders: the order in which the nodes should be deleted
   # Target whether the "Nodes" or "Edges" will be attacked
   
-  
-  
-  #plan(multiprocess(workers = cores))
-  plan(multiprocess)
+  plan(multiprocess, workers = cores)
   future_sapply(1:nrow(target_orders), function(n){
     
     Iter <- target_orders %>%
