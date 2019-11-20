@@ -1,3 +1,5 @@
+#' THis function is out of date it may not be useful any more and should be considered for removal
+
 Create_strain_alpha_results_df <- function(g, target_orders, Summary_folder){
   #g the graph that has been analysed across various edge alpha values and different edge loadings
   #target_orders a data frame that contains the simulation parameters, random seed and alpha of the network, created by...

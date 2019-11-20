@@ -10,7 +10,7 @@ sub_selection_of_seed_alpha <- function(seed_alpha, total_samples = 10, seed = 1
                              seed_alpha %>%
                                sample_n(total_samples-2)
   ) %>%
-    arrange(alpha)
+    arrange(mean_alpha)
   
   return(target_orders)
   
