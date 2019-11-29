@@ -18,12 +18,13 @@ untar_myriad_collapse_summaries <- function(tar_path, tar_file, extraction_direc
   
   just_rds <- file.path(all_files_in_tar[grep(".rds", all_files_in_tar)])
   
-  just_collapse_summary_data <- just_rds[grep("collapse_set_summaries", just_rds)]
+  just_collapse_summary_data <- just_rds[grep("xxsummaries", just_rds)]
   
   
   #print(basename(just_collapse_summary_data))
   untar(tarfile = file.path(tar_path, tar_file), 
         files = just_collapse_summary_data,
-        exdir = extraction_directory, 
-        extras = "--strip-components 4") #take only the useful bits of the 
+        exdir = extraction_directory#, 
+      #  extras = "--strip-components 4"  #take only the useful bits of the zip file
+      )
 }

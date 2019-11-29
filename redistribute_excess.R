@@ -31,7 +31,8 @@ redistribute_excess <- function(g,
   
   #An upgrade to this function is to distribute the excess relative to the centrality or electrical centrality of the edge
   
-  if(largest >0.5 | smallest > 0.5) stop(" 'largest' and 'smallest' must be smaller than or equal to 0.5")
+  if(largest >0.5 | smallest > 0.5) stop(paste(" 'largest' and 'smallest' must be smaller than or equal to 0.5. 'largest' is", 
+  largest, " smallest' is ", smallest))
   if((fraction<0)|(fraction>1)) stop("Fraction must be between 0 and 1")
   
   
