@@ -4,8 +4,8 @@ GeoAndForceCoords <- function(g, NodePos, seed= 2346){
   
   test <- g %>%
     as_data_frame(.) %>%
-    select(from, to, Link, Voltage) %>%
-    gather(key = "type", value = "Node", -Voltage,-Link) %>%
+  #  select(from, to, Link, Voltage) %>% #The old version new version keeps all data
+    pivot_longer(., cols = c(from, to), names_to = "type", values_to = "Node") %>%
     left_join(NodePos)
 
   set.seed(seed)

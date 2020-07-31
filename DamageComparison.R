@@ -7,9 +7,9 @@ DamageComparison <- function(df, Target = "Blackout", AlphaOrder){
     #Filter to a single simulation ID and spread so that each alpha is its own column. The Real Line limits are included in the alphas
     SimAttack <- df %>%
       filter(simulationID == .x) %>%
-      select(Target, alpha, NodesAttacked) %>% 
+      select(Target, alpha, attack_round) %>% 
       spread(key = alpha, value = Target) %>%
-      select(-NodesAttacked) %>%
+      select(-attack_round) %>%
       filter(Real_Limits !=1)
     
     #Fill any NA values with 1 as NAs are caused by the complete collapse of the grid

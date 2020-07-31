@@ -32,7 +32,7 @@ Create_kriged_df <- function(data_df, variable = "z", spatial_poly, grid_points 
     remove.duplicates() #remove duplicate points aka points super close
   
   #create spatial points of data that will have input_var interpolated
-  grd_sf  <-  gdf %>% #expand.grid(x =unique(gdf$x), y = unique(gdf$y)) %>% as.tibble %>% #if expand grid isn't used problems
+  grd_sf  <-  gdf %>% #expand.grid(x =unique(gdf$x), y = unique(gdf$y)) %>% as_tibble %>% #if expand grid isn't used problems
     rename(Longitude = x, Latitude = y) %>%
     st_as_sf(., coords = c("Longitude","Latitude"),
              crs = "+proj=longlat +datum=WGS84", agr = "constant") %>%
@@ -52,7 +52,7 @@ Create_kriged_df <- function(data_df, variable = "z", spatial_poly, grid_points 
   print("Kriging data")
   lzn.kriged <- krige((input_var) ~ 1, remove.duplicates(DT_sf), grd_sf, model=dt.fit$var_mode) 
   
-  kriged_df <- lzn.kriged %>% as.tibble %>%
+  kriged_df <- lzn.kriged %>% as_tibble %>%
     rename(!!variable := var1.pred) %>%
     select(-var1.var) %>%
     rename(Longitude = coords.x1, Latitude = coords.x2) 
