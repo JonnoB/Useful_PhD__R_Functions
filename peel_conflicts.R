@@ -2,7 +2,7 @@
 #' 
 #' A function that simulates conflicts between nodes on a peels network
 #' 
-#' @param graph_types a character vector. The peels networks to be used can includes capital letters from A to E
+#' @param graph_type characterr. The peels networks to be used can  be capital letters from A to E
 #' @param beligerents a dataframe. A two column data frame containing the node index of each beligerent. The columns must be
 #' names "node1" and "node2".
 #' @param k_levels a numeric vector. The values the the spring strength will take for each spring type, see details
@@ -10,8 +10,7 @@
 #' for reproducibility
 #' 
 #' @details 
-#' The function simulates a conflict for every combination of beligerent pair and graph type for the given k values.
-#' 
+#' The function simulates a conflict for every combination of beligerent pair for the graph type and the given k values.
 #' 
 #' The k_levels parameters describes the spring strength on each of the three types of link.
 #' The first value corresponds to edges which join nodes of the same sub class. The second value corresponds
@@ -21,40 +20,37 @@
 #' @return a dataframe with the conflict results and associated analysis
 
 
-
-
-
-peel_conflicts <- function(graph_types = LETTERS[1:5],
+peel_conflicts <- function(graph_type = "A",
                            beligerents = tibble(node1 = 1:2, node2 = 40:39),
                            k_levels = c(1000,500,100),
                            samples = 30){
-
-  parameter_df <- expand_grid(tibble(graph_type = graph_types) , #letters to test
-                                   beligerents #nodes to test
-)
   
-  peels_results <- 1:nrow(parameter_df) %>%
+  parameter_df <- beligerents #nodes to test
+  
+  
+  all_samples <- suppressMessages(1:samples %>%
     map_df(~{
-      print(.x)
+      sample_no <- .x
+      #set the seed
       
-      graph_type <- parameter_df$graph_type[.x]
-      node_1 <- parameter_df$node1[.x]
-      node_2 <- parameter_df$node2[.x]
+      set.seed(sample_no)
+      #create Peel graphs
+      #This loop ensures the peel graph is a single component.
+      #It is rare that they are not but it does happen
+      nodes <- 0
+      while(nodes !=40){
+        g <- generate_peels_network(type = graph_type ) %>%
+          remove_small_components()
+        nodes <- vcount(g)
+      }
       
-      all_samples <- 1:samples %>%
+      peels_results <- 1:nrow(parameter_df) %>%
         map_df(~{
-          #set the seed
-          set.seed(.x)
-          #create Peel graphs
+          print(paste(.x, "of", nrow(parameter_df), "node pairs. sample", sample_no, "of", samples ))
           
-          #This loop ensures the peel graph is a single component.
-          #It is rare that they are not but it does happen
-          nodes <- 0
-          while(nodes !=40){
-            g <- generate_peels_network(type = graph_type ) %>%
-              remove_small_components()
-            nodes <- vcount(g)
-          }
+          node_1 <- parameter_df$node1[.x]
+          node_2 <- parameter_df$node2[.x]
+          
           #prepare for embedding
           g <- g %>%
             peels_class_k(., k_levels = k_levels) %>% #assign the spring stiffnesses to the edge types
@@ -63,13 +59,9 @@ peel_conflicts <- function(graph_types = LETTERS[1:5],
               node_names = "name",
               force_var = "force") 
           
-     
-          
           #embed the graph
           result <- g %>%
             auto_SETSe()
-          
-          
           
           #get the betweeness of each node and the cluster that each node is on
           results_with_cluster <- result$node_embeddings %>%
@@ -97,7 +89,6 @@ peel_conflicts <- function(graph_types = LETTERS[1:5],
                 cutree(., k = 2)
             ), by = "node"
             )
-          
           
           #sumamrise the cluster data in terms of who won
           {
@@ -144,10 +135,12 @@ peel_conflicts <- function(graph_types = LETTERS[1:5],
             select(-cluster_type) %>%
             pivot_wider(names_from = name, values_from = value)%>%
             mutate(
+              neutral_nodes = sum(results_with_cluster$elevation==0),
               betweenness_ratio = results_with_cluster$betweenness[which(results_with_cluster$force==1)]/results_with_cluster$betweenness[which(results_with_cluster$force==-1)],
               class2 = results_with_cluster$class[which(results_with_cluster$force==-1)],
               sub_class2 = results_with_cluster$sub_class[which(results_with_cluster$force==-1)],
-              sample = .x,
+              sample = sample_no,
+              statif_force = sum(abs(results_with_cluster$static_force)),
               node1 = node_1,
               node2 = node_2)
           
@@ -155,10 +148,10 @@ peel_conflicts <- function(graph_types = LETTERS[1:5],
           
         }) %>% mutate(graph_type = graph_type)
       
-      return(all_samples )
+      return(peels_results)
       
     })
+  )
   
-  return(peels_results)
-
+  return(all_samples )
 }
