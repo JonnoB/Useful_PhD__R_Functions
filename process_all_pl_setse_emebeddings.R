@@ -16,7 +16,8 @@ process_all_pl_setse_emebeddings <- function( strain_folders, attack_folders){
     map_df(~{
       
       file_path <-.x
-      read_rds(file_path) 
+     temp  <-read_rds(file_path) 
+     return(temp)
     }) %>% 
     group_by(carrying_capacity, graph) %>%
     summarise_all(mean) %>%
@@ -26,7 +27,7 @@ process_all_pl_setse_emebeddings <- function( strain_folders, attack_folders){
     select(-median_alpha) %>%
     mutate(carrying_capacity = signif(carrying_capacity))
   
-  PL_SETSe_emebeddings <- list.files(strain_folders, full.names = T) %>%
+  PL_SETSe_emebeddings_raw <- list.files(strain_folders, full.names = T) %>%
     map_df(~{
       print(basename(.x))
       test <- list.files(.x, full.names = T) %>%
@@ -42,8 +43,6 @@ process_all_pl_setse_emebeddings <- function( strain_folders, attack_folders){
                       median_loading = median(line_load, na.rm = T),
                       mean_alpha = mean(1/line_load, na.rm = T),
                       median_alpha = median(1/line_load, na.rm = T),
-                      # mean_logstrain = mean(log10(strain), na.rm = T),
-                      # mean_logtension = mean(log10(tension), na.rm = T),
                       mean_strain = mean(strain, na.rm = T),
                       median_strain = median(strain, na.rm = T),
                       mean_tension = mean(tension, na.rm = T),
@@ -55,22 +54,42 @@ process_all_pl_setse_emebeddings <- function( strain_folders, attack_folders){
           
         }) %>% mutate(graph = basename(.x))
       
-    })
-  
-  
-  PL_SETSe_emebeddings <- left_join(PL_graph_agg %>% 
-                                      select(-mean_alpha, -mean_loading,-median_loading) %>%
-                                      mutate(
-                                        carrying_capacity = as.character(carrying_capacity)
-                                      ),
-                                    PL_SETSe_emebeddings) %>%
+    }) %>%
+    left_join(PL_graph_agg %>% 
+                select(-mean_alpha, -mean_loading,-median_loading) %>%
+                mutate(
+                  carrying_capacity = as.character(carrying_capacity)
+                ),
+              .)  %>%
     mutate(mean_alpha = 1/mean_alpha,
-           carrying_capacity = as.numeric(carrying_capacity)) %>%
-    group_by(graph) %>%
-    mutate_at(vars(mean_loading:median_tension), kappa) %>%
-    pivot_longer(.,cols = mean_loading:median_tension, names_to = "metric") %>%
-    separate(., col ="metric", into = c("average_type", "metric"), sep ="_")
+           carrying_capacity = as.numeric(carrying_capacity))
   
+  #This block allows the extrema to be found as these act as the normalising limits for all metrics
+  #These values are also used to normalise the redistributed results
+  PL_SETSe_emebeddings_extrema <- PL_SETSe_emebeddings_raw %>%
+    filter(carrying_capacity %in% c(1, Inf)) %>%
+    pivot_longer(.,cols = mean_loading:median_tension, names_to = "metric") %>%
+    separate(., col ="metric", into = c("average_type", "metric"), sep ="_") %>%
+    select(carrying_capacity, graph, average_type:value) %>%
+    group_by(graph,average_type, metric) %>%
+    mutate(carrying_capacity = ifelse(value == max(value), "max_val", "min_val")) %>% #This ensures that tension is the right way round
+    pivot_wider(., names_from = carrying_capacity, values_from = value) %>%
+    ungroup
+  
+  PL_SETSe_emebeddings <-PL_SETSe_emebeddings_raw %>%
+    pivot_longer(.,cols = mean_loading:median_tension, names_to = "metric") %>%
+    separate(., col ="metric", into = c("average_type", "metric"), sep ="_") %>%
+    left_join(PL_SETSe_emebeddings_extrema) %>%
+    mutate(value_raw = value,
+           value =  (value-min_val)/(max_val-min_val))
+  # 
+  # PL_SETSe_emebeddings <- PL_SETSe_emebeddings_raw %>%
+  #   group_by(graph) %>%
+  #   mutate_at(vars(mean_loading:median_tension),kappa) %>% #The kappa value makes everything relative to the column max and min
+  #   #This should be changed as then the PL values can be used to create the limits for the non-pl graphs
+  #   pivot_longer(.,cols = mean_loading:median_tension, names_to = "metric") %>%
+  #   separate(., col ="metric", into = c("average_type", "metric"), sep ="_")
+  # 
   
   return(PL_SETSe_emebeddings)
 }

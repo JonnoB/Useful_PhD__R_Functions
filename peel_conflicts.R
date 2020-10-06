@@ -23,17 +23,12 @@
 peel_conflicts <- function(graph_type = "A",
                            beligerents = tibble(node1 = 1:2, node2 = 40:39),
                            k_levels = c(1000,500,100),
-                           samples = 30){
+                           seed = 1,
+                           verbose = FALSE){
   
   parameter_df <- beligerents #nodes to test
   
-  
-  all_samples <- suppressMessages(1:samples %>%
-    map_df(~{
-      sample_no <- .x
-      #set the seed
-      
-      set.seed(sample_no)
+      set.seed(seed)
       #create Peel graphs
       #This loop ensures the peel graph is a single component.
       #It is rare that they are not but it does happen
@@ -46,7 +41,8 @@ peel_conflicts <- function(graph_type = "A",
       
       peels_results <- 1:nrow(parameter_df) %>%
         map_df(~{
-          print(paste(.x, "of", nrow(parameter_df), "node pairs. sample", sample_no, "of", samples ))
+         
+           if(verbose){print(paste(.x, "of", nrow(parameter_df), "node pairs." ))}
           
           node_1 <- parameter_df$node1[.x]
           node_2 <- parameter_df$node2[.x]
@@ -139,8 +135,8 @@ peel_conflicts <- function(graph_type = "A",
               betweenness_ratio = results_with_cluster$betweenness[which(results_with_cluster$force==1)]/results_with_cluster$betweenness[which(results_with_cluster$force==-1)],
               class2 = results_with_cluster$class[which(results_with_cluster$force==-1)],
               sub_class2 = results_with_cluster$sub_class[which(results_with_cluster$force==-1)],
-              sample = sample_no,
-              statif_force = sum(abs(results_with_cluster$static_force)),
+              sample = seed,
+              static_force = sum(abs(results_with_cluster$static_force)),
               node1 = node_1,
               node2 = node_2)
           
@@ -149,9 +145,5 @@ peel_conflicts <- function(graph_type = "A",
         }) %>% mutate(graph_type = graph_type)
       
       return(peels_results)
-      
-    })
-  )
-  
-  return(all_samples )
+
 }

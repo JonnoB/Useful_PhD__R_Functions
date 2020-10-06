@@ -8,11 +8,12 @@
 #'  @param processed_path A character string. The location of the processed files
 #'  @param folder_paths A character vector. The paths of each folder to load and process, each folder represents a graph
 #'  @param graph_agg A data frame of the summarised attack data that matches the strain data
+#'  @param PL_SETSe_emebeddings A dataframe the output of the pl equivalent of this function
 #'  @export
 #'  
 #'  
 #'  
-process_all_setse_emebeddings <- function(processed_path, folder_paths, graph_agg){
+process_all_setse_emebeddings <- function(processed_path, folder_paths, graph_agg, PL_SETSe_emebeddings){
   if(file.exists(processed_path)){
     
     all_SETSe_emebeddings2 <- readRDS(processed_path)
@@ -96,12 +97,15 @@ process_all_setse_emebeddings <- function(processed_path, folder_paths, graph_ag
       mutate(mean_alpha = 1/mean_alpha) %>%
       mutate_at(1:4, list(as.numeric)) %>%
       group_by(graph) %>%
-      mutate_at(vars(mean_loading:median_elev), kappa) %>%
+      #mutate_at(vars(mean_loading:median_elev), kappa) %>%
       pivot_longer(.,cols = mean_loading:median_elev, names_to = "metric") %>%
       # mutate_at(vars(mean_loading:median_tension), kappa) %>%
       # pivot_longer(.,cols = mean_loading:median_tension, names_to = "metric") %>%
       separate(., col ="metric", into = c("average_type", "metric"), sep ="_") %>%
-      ungroup
+      ungroup %>%
+      left_join(PL_SETSe_emebeddings_extrema) %>%
+      mutate(value_raw = value,
+             value =  (value-min_val)/(max_val-min_val))
     
     saveRDS(all_SETSe_emebeddings2, processed_path)
     

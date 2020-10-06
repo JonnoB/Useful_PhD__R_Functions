@@ -9,7 +9,10 @@
 #' @export
 #' 
 peel_conflict_subclass_performance <- function(peels_results, peels_results_uniform){
+   
   
+  #split the data frame so that each node has it's full results this means A-B is split so
+  #A is a row and B is a row
   full_mat_peel_1 <-   peels_results %>%
     bind_rows(peels_results %>%
                 rename(sub_class3 = sub_class, 
@@ -48,7 +51,7 @@ peel_conflict_subclass_performance <- function(peels_results, peels_results_unif
               loss_uniform = sum(clustering_elev_fract<0.5)) %>%
     ungroup
   
-  victory_point<-mean(wins_uniform$sample)
+  victory_point <-mean(wins_uniform$sample)
   
   performance_change <-left_join(wins_1, wins_uniform, by = c("sub_class", "sub_class2", "sample")) %>%
     #rename(node = node1) %>%

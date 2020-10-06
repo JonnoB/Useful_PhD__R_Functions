@@ -7,8 +7,8 @@
 #' @param spatial_df a spatial polygons dataframe giving the extent of the map over which kriging will interpolate.
 #' @param model A character string. Parameter is passed to the autofitVariogram function.
 
-krige_height_strain_maps <-function(SETSe_list, coords, spatial_df, model = "Sph"){
-  #This function performs all the steps necessary to krige the height and strain data for plotting next to each other in ggplot
+krige_SETSe_maps <-function(SETSe_list, coords, spatial_df, model = "Sph"){
+  #This function performs all the steps necessary to krige the elevation and strain data for plotting next to each other in ggplot
   #This function is to simplify the code and make the process easily repeatable
   #SETSe_List the output of one of the SETSe producing functions
   #coords: the coordinate data from the the MakeMapDF function
@@ -37,7 +37,7 @@ krige_height_strain_maps <-function(SETSe_list, coords, spatial_df, model = "Sph
   print("Calculating Tension")
   kriged_tension   <- Create_kriged_df(edge_coords, "tension", spatial_df, 8e4, model = model) %>% mutate(type = "Tension")
   print("Calculating Load")
-  kriged_load      <- Create_kriged_df(edge_coords, "line_load", spatial_df, 8e4, model = model) %>% mutate(type = "Load")
+  kriged_load      <- Create_kriged_df(edge_coords, "line_load", spatial_df, 8e4, model = model) %>% mutate(type = "Line Load")
   
  Out <- bind_rows(kriged_elevation %>% rename(value = elevation), 
               #    kriged_strain %>% rename(value = strain), 
