@@ -24,7 +24,8 @@ clean_embeddings_pre_eval <- function(folder_path, file_name, active_period, dat
   
   #The paths for the python embeddings
   embeddings_paths <- list.files("/home/jonno/setse_1_data/facebookpython", pattern = file_name, full.names = T) %>%
-    c(., list.files("/home/jonno/setse_1_data/facebooknode2vec", pattern = file_name, full.names = T))
+    c(., list.files("/home/jonno/setse_1_data/facebooknode2vec", pattern = file_name, full.names = T),
+      list.files("/home/jonno/setse_1_data/facebookstellargraph", pattern = file_name, full.names = T))
   
   embeddings <- embeddings_paths %>%
     map_df(~{
@@ -43,7 +44,17 @@ clean_embeddings_pre_eval <- function(folder_path, file_name, active_period, dat
           select(X1 = X2, X2 = X3) %>%
           as_tibble
         
-      } else {
+      }  else if(model_name == "DGI"){
+        #The stellargraph library produces a slightly different format
+        temp <- read_csv(current_path, 
+                         col_names = FALSE,
+                         skip = 1) %>% 
+          mutate(X1 = str_remove(X1, "n") %>% as.integer()) %>%
+          arrange(X1) %>%
+          select(X1 = X2, X2 = X3) %>%
+          as_tibble
+        
+      }else {
         
         temp <- read_csv(current_path, col_names = FALSE) 
         
