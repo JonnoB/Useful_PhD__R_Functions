@@ -2,8 +2,8 @@
 #' 
 #' A function that simulates conflicts between nodes on a peels network
 #' 
-#' @param graph_type characterr. The peels networks to be used can  be capital letters from A to E
-#' @param beligerents a dataframe. A two column data frame containing the node index of each beligerent. The columns must be
+#' @param graph_type character. The peels networks to be used can  be capital letters from A to E
+#' @param beligerents a dataframe. A two column data frame containing the node index of each belligerent. The columns must be
 #' names "node1" and "node2".
 #' @param k_levels a numeric vector. The values the the spring strength will take for each spring type, see details
 #' @param  samples an integer. The total number of random graphs to be tested. the seed is set to be the iteration number

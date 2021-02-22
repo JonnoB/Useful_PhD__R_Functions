@@ -1,9 +1,9 @@
-#' laod dl graph type 
+#' load dl graph type 
 #' 
 #' a dl loader for pajek dl files and dl files from the Linton freedman network archive http://moreno.ss.uci.edu
 #' 
 #' According to the igraph documentation there is a lack of dl format standard. This means that creating a dl loader is challenging.
-#' unfortuneately a lot of file on the pajek database are in dl format. I have made this loader so that they can be used.
+#' unfortunately a lot of file on the pajek database are in dl format. I have made this loader so that they can be used.
 #' 
 #' @return The function returns a named list where each element of the list is a an igraph object representing each network in the dl file
 #' 

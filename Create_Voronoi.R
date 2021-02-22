@@ -5,7 +5,8 @@
 #' This possibly outputs a voronoi tesselation, it definately outputs and sf object
 #' 
 #' @param node_values  A dataframe containing a Node column a Longitude column a Latitude column as well as any desired attribute columns
-#' @param sfc_map An sfc object defining the geometry of the area that the nodes are in. 
+#' @param sfc_map An sfc object defining the geometry of the area that the nodes are in. This is usually the shape file 
+#' of the geography loaded using st_read
 #' 
 Create_Voronoi <- function(node_values, sfc_map){
   #node values a dataframe containing a Node columns a Longitude column a Latitude column as well as any desired attribute columns
